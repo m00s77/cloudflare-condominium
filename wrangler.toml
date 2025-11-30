@@ -1,4 +1,4 @@
-name = "cloudflare-condominium-worker"
+name = "condominium"
 main = "src/index.js"
 compatibility_date = "2025-11-30"
 workers_dev = true
