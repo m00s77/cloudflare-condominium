@@ -1,4 +1,14 @@
-const BASE_URL = "http://127.0.0.1:8787"; // Local Wrangler dev
+const BASE_URL = process.env.REACT_APP_API_URL;
+
+export async function getResidents() {
+  const res = await fetch(`${BASE_URL}/residents`);
+  return res.json();
+}
+
+export async function getResidents() {
+  const res = await fetch(`${BASE_URL}/residents`);
+  return res.json();
+}
 
 export const getResidents = async () =>
   (await fetch(`${BASE_URL}/residents`)).json();
