@@ -5,14 +5,6 @@ export async function getResidents() {
   return res.json();
 }
 
-export async function getResidents() {
-  const res = await fetch(`${BASE_URL}/residents`);
-  return res.json();
-}
-
-export const getResidents = async () =>
-  (await fetch(`${BASE_URL}/residents`)).json();
-
 export const addResident = async (name, apartment) =>
   fetch(`${BASE_URL}/residents`, {
     method: "POST",
