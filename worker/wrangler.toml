@@ -2,7 +2,22 @@ name = "cloudflare-condominium"
 main = "index.js"
 compatibility_date = "2025-11-30"
 
+# Development environment DB
 [[d1_databases]]
-binding = "DB"  # this is how your code references the database
+binding = "DB"
 database_name = "cloudflare_condominium_db"
 database_id = "98bbd139-7557-4cdd-a8e8-61a724be7c80"
+migrations_dir = "migrations"
+
+[env.production]
+name = "cloudflare-condominium-production"
+routes = [
+  { pattern = "api.dbseven.pt/*", zone_name = "dbseven.pt" }
+]
+
+# Production environment DB (must be explicitly repeated)
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "cloudflare_condominium_db"
+database_id = "98bbd139-7557-4cdd-a8e8-61a724be7c80"
+migrations_dir = "migrations"
