@@ -1,96 +1,47 @@
-import React, { useEffect, useState } from "react";
-import {
-  getResidents,
-  addResident,
-  updateResident,
-  deleteResident,
-} from "../services/api";
+import { useEffect, useState } from 'react';
 
 export default function ResidentsTable() {
   const [residents, setResidents] = useState([]);
-  const [form, setForm] = useState({ id: null, name: "", apartment: "" });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchResidents = async () => {
+      try {
+        const response = await fetch(import.meta.env.VITE_API_URL);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        setResidents(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchResidents();
   }, []);
 
-  const fetchResidents = async () => setResidents(await getResidents());
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (form.id) await updateResident(form.id, form.name, form.apartment);
-    else await addResident(form.name, form.apartment);
-    setForm({ id: null, name: "", apartment: "" });
-    fetchResidents();
-  };
-
-  const handleEdit = (res) => setForm(res);
-  const handleDelete = async (id) => {
-    await deleteResident(id);
-    fetchResidents();
-  };
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="mb-4 row g-2">
-        <div className="col-auto">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
-          />
-        </div>
-        <div className="col-auto">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Apartment"
-            value={form.apartment}
-            onChange={(e) => setForm({ ...form, apartment: e.target.value })}
-            required
-          />
-        </div>
-        <div className="col-auto">
-          <button type="submit" className="btn btn-primary">
-            {form.id ? "Update" : "Add"}
-          </button>
-        </div>
-      </form>
-
-      <table className="table table-striped table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Apartment</th>
-            <th>Actions</th>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Apartment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {residents.map((r) => (
+          <tr key={r.id}>
+            <td>{r.id}</td>
+            <td>{r.name}</td>
+            <td>{r.apartment}</td>
           </tr>
-        </thead>
-        <tbody>
-          {residents.map((res) => (
-            <tr key={res.id}>
-              <td>{res.name}</td>
-              <td>{res.apartment}</td>
-              <td>
-                <button
-                  className="btn btn-sm btn-warning me-2"
-                  onClick={() => handleEdit(res)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleDelete(res.id)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }
